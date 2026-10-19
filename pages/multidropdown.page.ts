@@ -6,18 +6,20 @@ export class MultiDropdownPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.dropdown = page.getByRole("combobox");
+    this.dropdown = page.getByRole("listbox");
   }
 
   async open() {
     await this.page.goto("https://output.jsbin.com/osebed/2", { waitUntil: "domcontentloaded" });
+    // wait for the Cloudflare check to be passed by hand
+    await this.dropdown.waitFor({ timeout: 120_000 });
   }
 
-  async selectOption(option: string) {
-    await this.dropdown.selectOption(option);
+  async selectOptions(options: string[]) {
+    await this.dropdown.selectOption(options);
   }
 
-  async expectSelectedOption(option: string) {
-    await expect(this.dropdown).toHaveValue(option);
+  async expectSelectedOptions(values: string[]) {
+    await expect(this.dropdown).toHaveValues(values);
   }
 }

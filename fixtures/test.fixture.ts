@@ -1,4 +1,4 @@
-import { test as base } from "@playwright/test";
+import { test as base, chromium } from "@playwright/test";
 import { HomePage } from "../pages/home.page";
 import { LoginPage } from "../pages/login.page";
 import { CheckboxesPage } from "../pages/checkboxes.page";
@@ -34,7 +34,16 @@ export const test = base.extend<PomFixtures>({
   },
 
   multidropdownPage: async ({ page }, use) => {
-    await use(new MultiDropdownPage(page));
+    if (!process.env.CDP_URL) {
+      await use(new MultiDropdownPage(page));
+      return;
+    }
+    // Attach to a Chrome opened by hand, so Cloudflare sees a normal browser
+    const browser = await chromium.connectOverCDP(process.env.CDP_URL);
+    const context = browser.contexts()[0];
+    const cdpPage = context.pages()[0] ?? (await context.newPage());
+    await use(new MultiDropdownPage(cdpPage));
+    await browser.close();
   },
 });
 

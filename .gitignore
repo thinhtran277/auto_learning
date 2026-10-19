@@ -7,3 +7,4 @@ playwright/.auth/
 .auth/
 .env
 *.log
+.chrome-profile/

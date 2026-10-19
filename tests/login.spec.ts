@@ -16,7 +16,7 @@ test.describe("Form Authentication", () => {
     await loginPage.expectLoginFailed("Your password is invalid!");
   });
 
-  test("TC03: Login failed with invalid username", async ({ loginPage }) => {
+  test("TC02-01: Login failed with invalid username", async ({ loginPage }) => {
     await loginPage.login("wrongUsername", "SuperSecretPassword!");
     await loginPage.expectLoginFailed("Your username is invalid!");
   });

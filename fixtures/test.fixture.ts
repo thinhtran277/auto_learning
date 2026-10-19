@@ -2,8 +2,8 @@ import { test as base, chromium, Page } from "@playwright/test";
 import { LoginPage } from "../pages/login.page";
 import { CheckboxesPage } from "../pages/checkboxes.page";
 import { DropdownPage } from "../pages/dropdown.page";
-import { StatusCodePage } from "../pages/statuscode.page";
-import { MultiDropdownPage } from "../pages/multidropdown.page";
+import { StatusCodePage } from "../pages/statusCode.page";
+import { MultiDropdownPage } from "../pages/multiDropdown.page";
 
 type PomFixtures = {
   cdpPage: Page;

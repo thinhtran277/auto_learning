@@ -1,5 +1,4 @@
-import { test as base, chromium } from "@playwright/test";
-import { HomePage } from "../pages/home.page";
+import { test as base, chromium, Page } from "@playwright/test";
 import { LoginPage } from "../pages/login.page";
 import { CheckboxesPage } from "../pages/checkboxes.page";
 import { DropdownPage } from "../pages/dropdown.page";
@@ -7,7 +6,7 @@ import { StatusCodePage } from "../pages/statuscode.page";
 import { MultiDropdownPage } from "../pages/multidropdown.page";
 
 type PomFixtures = {
-  homePage: HomePage;
+  cdpPage: Page;
   loginPage: LoginPage;
   checkboxesPage: CheckboxesPage;
   dropdownPage: DropdownPage;
@@ -16,15 +15,23 @@ type PomFixtures = {
 };
 
 export const test = base.extend<PomFixtures>({
-  homePage: async ({ page }, use) => {
-    await use(new HomePage(page));
+  // A new tab in a Chrome opened by hand (CDP_URL), so Cloudflare sees a normal browser
+  cdpPage: async ({}, use) => {
+    const browser = await chromium.connectOverCDP(process.env.CDP_URL!);
+    const page = await browser.contexts()[0].newPage();
+    await use(page);
+    await page.close();
+    await browser.close();
   },
+
   loginPage: async ({ page }, use) => {
     await use(new LoginPage(page));
   },
+
   checkboxesPage: async ({ page }, use) => {
     await use(new CheckboxesPage(page));
   },
+
   dropdownPage: async ({ page }, use) => {
     await use(new DropdownPage(page));
   },
@@ -33,20 +40,14 @@ export const test = base.extend<PomFixtures>({
     await use(new StatusCodePage(page));
   },
 
-  multidropdownPage: async ({ page }, use) => {
-    if (!process.env.CDP_URL) {
-      await use(new MultiDropdownPage(page));
-      return;
-    }
-    // Attach to a Chrome opened by hand, so Cloudflare sees a normal browser
-    const browser = await chromium.connectOverCDP(process.env.CDP_URL);
-    const context = browser.contexts()[0];
-    const cdpPage = context.pages()[0] ?? (await context.newPage());
-    await use(new MultiDropdownPage(cdpPage));
-    await browser.close();
-  },
+  // Picked at load time so the CDP run does not also launch Playwright's own browser
+  multidropdownPage: process.env.CDP_URL
+    ? async ({ cdpPage }, use) => {
+        await use(new MultiDropdownPage(cdpPage));
+      }
+    : async ({ page }, use) => {
+        await use(new MultiDropdownPage(page));
+      },
 });
 
 export { expect } from "@playwright/test";
-
-console.log("test.fixture.ts loaded");

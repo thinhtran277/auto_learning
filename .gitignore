@@ -8,3 +8,5 @@ playwright/.auth/
 .env
 *.log
 .chrome-profile/
+tests/first-test.spec.ts
+tests/note-class.spec.ts

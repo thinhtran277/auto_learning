@@ -3,7 +3,8 @@ import { HomePage } from "../pages/home.page";
 import { LoginPage } from "../pages/login.page";
 import { CheckboxesPage } from "../pages/checkboxes.page";
 import { DropdownPage } from "../pages/dropdown.page";
-import { StatusCodePage } from "../pages/statuscode";
+import { StatusCodePage } from "../pages/statuscode.page";
+import { MultiDropdownPage } from "../pages/multidropdown.page";
 
 type PomFixtures = {
   homePage: HomePage;
@@ -11,6 +12,7 @@ type PomFixtures = {
   checkboxesPage: CheckboxesPage;
   dropdownPage: DropdownPage;
   statuscodePage: StatusCodePage;
+  multidropdownPage: MultiDropdownPage;
 };
 
 export const test = base.extend<PomFixtures>({
@@ -25,11 +27,15 @@ export const test = base.extend<PomFixtures>({
   },
   dropdownPage: async ({ page }, use) => {
     await use(new DropdownPage(page));
-  },  
+  },
 
   statuscodePage: async ({ page }, use) => {
     await use(new StatusCodePage(page));
-  }
+  },
+
+  multidropdownPage: async ({ page }, use) => {
+    await use(new MultiDropdownPage(page));
+  },
 });
 
 export { expect } from "@playwright/test";

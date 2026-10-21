@@ -1,4 +1,4 @@
-import { expect, type Locator, type Page } from "@playwright/test";
+import { type Locator, type Page } from "@playwright/test";
 
 export class LoginPage {
   readonly page: Page;
@@ -6,6 +6,7 @@ export class LoginPage {
   readonly passwordInput: Locator;
   readonly loginButton: Locator;
   readonly flashMessage: Locator;
+  readonly url = "https://the-internet.herokuapp.com/login";
 
   constructor(page: Page) {
     this.page = page;
@@ -16,24 +17,12 @@ export class LoginPage {
   }
 
   async open(): Promise<void> {
-    await this.page.goto("https://the-internet.herokuapp.com/login", { waitUntil: "domcontentloaded" });
+    await this.page.goto(this.url, { waitUntil: "domcontentloaded" });
   }
 
   async login(username: string, password: string): Promise<void> {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
-  }
-
-  async expectLoggedIn(): Promise<void> {
-    await expect(this.page).toHaveURL(/\/secure$/);
-    await this.page.waitForLoadState("domcontentloaded");
-    await expect(this.flashMessage).toContainText("You logged into a secure area!");
-  }
-
-  async expectLoginFailed(message: string): Promise<void> {
-    await expect(this.page).toHaveURL(/\/login$/);
-    await this.page.waitForLoadState("domcontentloaded");
-    await expect(this.flashMessage).toContainText(message);
   }
 }

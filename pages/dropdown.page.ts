@@ -1,8 +1,9 @@
-import { expect, type Locator, type Page } from "@playwright/test";
+import { type Locator, type Page } from "@playwright/test";
 
 export class DropdownPage {
   readonly page: Page;
   readonly dropdown: Locator;
+  readonly url = "https://the-internet.herokuapp.com/dropdown";
 
   constructor(page: Page) {
     this.page = page;
@@ -10,14 +11,10 @@ export class DropdownPage {
   }
 
   async open() {
-    await this.page.goto("https://the-internet.herokuapp.com/dropdown", { waitUntil: "domcontentloaded" });
+    await this.page.goto(this.url, { waitUntil: "domcontentloaded" });
   }
 
   async selectOption(option: string) {
     await this.dropdown.selectOption(option);
-  }
-
-  async expectSelectedOption(option: string) {
-    await expect(this.dropdown).toHaveValue(option);
   }
 }

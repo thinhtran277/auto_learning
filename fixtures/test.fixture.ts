@@ -4,6 +4,7 @@ import { CheckboxesPage } from "../pages/checkboxes.page";
 import { DropdownPage } from "../pages/dropdown.page";
 import { StatusCodePage } from "../pages/statusCode.page";
 import { MultiDropdownPage } from "../pages/multiDropdown.page";
+import { UploadFilePage } from "../pages/uploadFile.page";
 
 type PomFixtures = {
   cdpPage: Page;
@@ -12,6 +13,7 @@ type PomFixtures = {
   dropdownPage: DropdownPage;
   statuscodePage: StatusCodePage;
   multidropdownPage: MultiDropdownPage;
+  uploadFilePage: UploadFilePage;
 };
 
 export const test = base.extend<PomFixtures>({
@@ -38,6 +40,10 @@ export const test = base.extend<PomFixtures>({
 
   statuscodePage: async ({ page }, use) => {
     await use(new StatusCodePage(page));
+  },
+
+  uploadFilePage: async ({ page }, use) => {
+    await use(new UploadFilePage(page));
   },
 
   // Picked at load time so the CDP run does not also launch Playwright's own browser

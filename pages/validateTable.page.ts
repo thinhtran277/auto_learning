@@ -40,6 +40,4 @@ export class ValidateTablePage {
   async open() {
     await this.page.goto(this.url, { waitUntil: "domcontentloaded" });
   }
-
-
 }

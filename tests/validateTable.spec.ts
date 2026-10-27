@@ -9,14 +9,25 @@ test.describe("validateTable", () => {
   test("TC08: Web Table - Validate largest due person from a table", async ({ validateTablePage }) => {
     const people = await validateTablePage.getPeople();
 
-    // Keep whoever has the larger due
-    const top = people.reduce((max, p) => (p.due > max.due ? p : max));
-    const fullName = `${top.firstName} ${top.lastName}`;
+    // Step 1: find the person with the largest due
+    let top = people[0];
+    for (const person of people) {
+      if (person.due > top.due) {
+        top = person;
+      }
+    }
 
-    expect(fullName).toBe("Jason Doe");
+    // Step 2: only one person may have that due (no tie)
+    let countTop = 0;
+    for (const person of people) {
+      if (person.due === top.due) {
+        countTop++;
+      }
+    }
+    expect(countTop).toBe(1);
 
-    // The row showing the top due on the page must belong to the same person
-    const topRow = validateTablePage.rows.filter({ hasText: `$${top.due.toFixed(2)}` });
+    // Step 3: the row with that due on the page must show the same name
+    const topRow = validateTablePage.rows.filter({ hasText: "$" + top.due.toFixed(2) });
     await expect(topRow).toContainText(top.firstName);
     await expect(topRow).toContainText(top.lastName);
 

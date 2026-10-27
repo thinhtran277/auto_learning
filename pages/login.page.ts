@@ -20,9 +20,12 @@ export class LoginPage {
     await this.page.goto(this.url, { waitUntil: "domcontentloaded" });
   }
 
-  async login(username: string, password: string): Promise<void> {
+  async fillCredentials(username: string, password: string): Promise<void> {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
+  }
+
+  async clickLogin(): Promise<void> {
     await this.loginButton.click();
   }
 }

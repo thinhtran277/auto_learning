@@ -5,6 +5,7 @@ import { DropdownPage } from "../pages/dropdown.page";
 import { StatusCodePage } from "../pages/statusCode.page";
 import { MultiDropdownPage } from "../pages/multiDropdown.page";
 import { UploadFilePage } from "../pages/uploadFile.page";
+import { ValidateTablePage } from "../pages/validateTable.page";
 
 type PomFixtures = {
   cdpPage: Page;
@@ -14,6 +15,7 @@ type PomFixtures = {
   statuscodePage: StatusCodePage;
   multidropdownPage: MultiDropdownPage;
   uploadFilePage: UploadFilePage;
+  validateTablePage: ValidateTablePage;
 };
 
 export const test = base.extend<PomFixtures>({
@@ -44,6 +46,10 @@ export const test = base.extend<PomFixtures>({
 
   uploadFilePage: async ({ page }, use) => {
     await use(new UploadFilePage(page));
+  },
+
+    validateTablePage: async ({ page }, use) => {
+    await use(new ValidateTablePage(page));
   },
 
   // Picked at load time so the CDP run does not also launch Playwright's own browser

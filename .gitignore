@@ -10,3 +10,4 @@ playwright/.auth/
 .chrome-profile/
 tests/firstTest.spec.ts
 tests/noteClass.spec.ts
+download/

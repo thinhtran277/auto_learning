@@ -4,7 +4,7 @@ Các file liên quan:
 
 | File | Vai trò |
 |---|---|
-| [pages/todoMvc.page.ts](../pages/todoMvc.page.ts) | Page object: locator + các thao tác (thêm, tick, xoá, sửa todo) |
+| [pages/todoMvcPage.ts](../pages/todoMvcPage.ts) | Page object: locator + các thao tác (thêm, tick, xoá, sửa todo) |
 | [fixtures/todoMvc.fixture.ts](../fixtures/todoMvc.fixture.ts) | Tạo `todoMvcPage` cho mỗi test |
 | [fixtures/test.fixture.ts](../fixtures/test.fixture.ts) | Gộp fixture, đã thêm `todoMvcTest` |
 | [tests/todoMvc.spec.ts](../tests/todoMvc.spec.ts) | 4 test TC15 → TC18 |

@@ -1,5 +1,5 @@
 import { test as base, chromium, Page } from "@playwright/test";
-import { MultiDropdownPage } from "../pages/multiDropdown.page";
+import { MultiDropdownPage } from "../pages/multiDropdownPage";
 
 type MultiDropdownFixtures = {
   cdpPage: Page;

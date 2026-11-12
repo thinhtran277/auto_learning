@@ -14,26 +14,24 @@ export class DetectBrokenImagesPage {
     await this.page.goto(this.url, { waitUntil: "domcontentloaded" });
   }
 
+  // Step 3 + 4: get all <img> elements and read the src of each one
   async getImageSources(): Promise<string[]> {
     const sources: string[] = [];
 
-    // Go through every <img> on the page and read its src attribute
-    for (const image of await this.images.all()) {
-      const src = await image.getAttribute("src");
-      if (src) {
-        sources.push(src);
-      }
+    const allImages = await this.images.all();
+    for (const image of allImages) {
+      const src = (await image.getAttribute("src")) ?? "";
+      sources.push(src);
     }
 
     return sources;
   }
 
+  // Step 5: send a GET request to the image link and return its status code
   async getStatusCode(src: string): Promise<number> {
-    // Turn "asdf.jpg" or "/img/x.svg" into a full URL on the same site
-    const fullUrl = new URL(src, this.url).href;
-
-    // Send a GET request for the image, without opening it in the browser
-    const response = await this.page.request.get(fullUrl);
+    // new URL() joins the src with the page address, e.g. https://the-internet.herokuapp.com/asdf.jpg
+    const imageUrl = new URL(src, this.url).href;
+    const response = await this.page.request.get(imageUrl);
 
     return response.status();
   }

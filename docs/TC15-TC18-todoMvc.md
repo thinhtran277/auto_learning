@@ -4,11 +4,8 @@ Các file liên quan:
 
 | File | Vai trò |
 |---|---|
-| [pages/todoMvc.page.ts](../pages/todoMvc.page.ts) | Page **gốc**: mở trang, thêm todo, tìm todo (TC15 dùng) |
-| [pages/todoMvcComplete.page.ts](../pages/todoMvcComplete.page.ts) | Kế thừa page gốc + tick todo, đếm "items left" (TC16) |
-| [pages/todoMvcDelete.page.ts](../pages/todoMvcDelete.page.ts) | Kế thừa page gốc + xoá todo (TC17) |
-| [pages/todoMvcEdit.page.ts](../pages/todoMvcEdit.page.ts) | Kế thừa page gốc + sửa todo (TC18) |
-| [fixtures/todoMvc.fixture.ts](../fixtures/todoMvc.fixture.ts) | Tạo 4 fixture: `todoMvcPage`, `todoMvcCompletePage`, `todoMvcDeletePage`, `todoMvcEditPage` |
+| [pages/todoMvc.page.ts](../pages/todoMvc.page.ts) | Page object: locator + các thao tác (thêm, tick, xoá, sửa todo) |
+| [fixtures/todoMvc.fixture.ts](../fixtures/todoMvc.fixture.ts) | Tạo `todoMvcPage` cho mỗi test |
 | [fixtures/test.fixture.ts](../fixtures/test.fixture.ts) | Gộp fixture, đã thêm `todoMvcTest` |
 | [tests/todoMvc.spec.ts](../tests/todoMvc.spec.ts) | 4 test TC15 → TC18 |
 
@@ -17,33 +14,11 @@ Xem từng bước bằng giao diện: `npx playwright test tests/todoMvc.spec.t
 
 ---
 
-## 1. Vì sao tách thành 1 page gốc + 3 page con (kế thừa)?
+## 1. Vì sao 4 test case dùng chung 1 page object?
 
-Cả 4 TC làm việc trên **cùng một trang**, và test nào cũng cần `open()` + `addTodo()` + `todoItem(text)`. Nếu tách thành 4 file độc lập thì 3 thứ đó bị chép lại 4 lần. Nên dùng **kế thừa (`extends`)**:
+Cả 4 TC đều làm việc trên **cùng một trang** (`https://todomvc.com/examples/react/dist/`). Page object đại diện cho **trang**, không phải cho test case. Vì vậy có 1 class `TodoMvcPage` chứa đủ thao tác, và 4 test chỉ gọi các hàm đó. Mỗi test xin `{ todoMvcPage }`, còn `beforeEach` mở trang trước mỗi test.
 
-```
-TodoMvcPage (gốc)          open(), addTodo(), todoItems, todoLabels, todoItem(text)
- ├─ TodoMvcCompletePage    + todoToggle(text), todoCount, toggleTodo()
- ├─ TodoMvcDeletePage      + todoDeleteButton(text), deleteTodo()
- └─ TodoMvcEditPage        + editInput, todoLabel(text), renameTodo()
-```
-
-Page con có **tất cả** những gì page gốc có, cộng thêm phần riêng. Ví dụ `todoMvcDeletePage.addTodo(...)` vẫn gọi được dù file `todoMvcDelete.page.ts` không viết hàm `addTodo`, vì nó được thừa hưởng từ `TodoMvcPage`.
-
-Trong constructor của page con, dòng đầu tiên luôn là `super(page)`:
-
-```ts
-export class TodoMvcDeletePage extends TodoMvcPage {
-  constructor(page: Page) {
-    super(page);   // chạy constructor của TodoMvcPage trước → this.todoItem có sẵn
-    this.todoDeleteButton = (text) => this.todoItem(text).getByRole("button", { name: "Delete todo" });
-  }
-}
-```
-
-`super(page)` = "chạy constructor của class cha". Phải gọi trước khi dùng `this`, nếu không TypeScript báo lỗi. Nhờ vậy `this.todoItem` đã được tạo sẵn để page con dùng tiếp.
-
-Vì 4 page cùng thuộc 1 trang, chúng dùng chung **1 file fixture** (`todoMvc.fixture.ts`) khai báo 4 fixture. Mỗi test chỉ xin đúng page nó cần, ví dụ TC17 dùng `async ({ todoMvcDeletePage }) => ...`. Vì mỗi test dùng page khác nhau nên `open()` được gọi ở đầu từng test, còn `beforeEach` chỉ giữ `test.slow()`.
+> Đã từng thử tách thành 1 page gốc + 3 page con dùng `extends` / `super(page)`. Cách đó chạy được, nhưng với một trang nhỏ như TodoMVC thì chỉ làm tăng số file, nên đã gộp lại. Kế thừa đáng dùng khi nhiều **trang khác nhau** cùng chia sẻ phần chung (ví dụ header, menu).
 
 ---
 
@@ -84,7 +59,6 @@ Hai điểm cần chú ý, ảnh hưởng tới cách viết locator:
 
 ## 3. Locator trong constructor
 
-> Ở mục này, code được gom lại để dễ đọc. Trong thực tế mỗi locator nằm ở page tương ứng (xem bảng ở mục 1).
 
 ### 3.1 Locator cố định (cả trang)
 
@@ -199,7 +173,7 @@ Quy tắc chung xuyên suốt: **chờ sự kiện trước, hành động sau**
 ## 8. Bài tập tự luyện (gợi ý)
 
 1. Viết TC19: thêm 3 todo, tick 1 cái, click filter **Active**, kiểm tra còn đúng 2 todo.
-   Gợi ý: tạo `TodoMvcFilterPage extends TodoMvcPage`, locator `page.getByRole("link", { name: "Active" })`. Cần tick todo thì có thể extends `TodoMvcCompletePage` thay vì page gốc.
+   Gợi ý: thêm vào `TodoMvcPage` locator `page.getByRole("link", { name: "Active" })` và một hàm để click filter.
 2. Viết TC20: thêm 2 todo, tick cả 2, click **Clear completed**, kiểm tra danh sách trống.
 3. Thử đổi `todoItem` sang `filter({ hasText: text })`, chạy TC18 và giải thích vì sao vẫn pass hoặc fail.
 4. Thử bỏ `exact: true`, thêm todo "Buy" và "Buy milk", rồi tick "Buy". Chuyện gì xảy ra?

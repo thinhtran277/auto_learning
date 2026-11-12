@@ -7,20 +7,20 @@ test.describe("todoMvc", () => {
 
   test("TC15: TodoMVC - Add new todos", async ({ todoMvcPage }) => {
     await todoMvcPage.open();
-    await todoMvcPage.addTodo("Buy milk");
-    await todoMvcPage.addTodo("Buy groceries");
+    await todoMvcPage.addTodo("Buy laptop");
+    await todoMvcPage.addTodo("Buy phone");
 
     await expect(todoMvcPage.todoItems).toHaveCount(2);
     // An array checks every label, in this exact order
-    await expect(todoMvcPage.todoLabels).toHaveText(["Buy milk", "Buy groceries"]);
+    await expect(todoMvcPage.todoLabels).toHaveText(["Buy laptop", "Buy phone"]);
   });
 
   test("TC16: TodoMVC - Mark todo as completed", async ({ todoMvcCompletePage }) => {
     await todoMvcCompletePage.open();
-    await todoMvcCompletePage.addTodo("Buy milk");
-    await todoMvcCompletePage.toggleTodo("Buy milk");
+    await todoMvcCompletePage.addTodo("Buy laptop");
+    await todoMvcCompletePage.toggleTodo("Buy laptop");
 
-    await expect(todoMvcCompletePage.todoToggle("Buy milk")).toBeChecked();
+    await expect(todoMvcCompletePage.todoToggle("Buy laptop")).toBeChecked();
     // The app shows "0 items left!", so check that the text contains it
     await expect(todoMvcCompletePage.todoCount).toContainText("0 items left");
   });
@@ -35,9 +35,9 @@ test.describe("todoMvc", () => {
 
   test("TC18: TodoMVC - Edit/rename a todo", async ({ todoMvcEditPage }) => {
     await todoMvcEditPage.open();
-    await todoMvcEditPage.addTodo("Walk the dog");
-    await todoMvcEditPage.renameTodo("Walk the dog", "Walk the dog (30 min)");
+    await todoMvcEditPage.addTodo("Hello world");
+    await todoMvcEditPage.renameTodo("Hello world", "Hello world (updated)");
 
-    await expect(todoMvcEditPage.todoLabels).toHaveText(["Walk the dog (30 min)"]);
+    await expect(todoMvcEditPage.todoLabels).toHaveText(["Hello world (updated)"]);
   });
 });

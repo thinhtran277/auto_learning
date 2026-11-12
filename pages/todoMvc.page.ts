@@ -1,7 +1,5 @@
 import { type Locator, type Page } from "@playwright/test";
 
-// Base page for TodoMVC: only what every TodoMVC test needs (open, add, find a todo).
-// The complete, delete and edit pages extend this class and add their own parts.
 export class TodoMvcPage {
   readonly page: Page;
   readonly newTodoInput: Locator;

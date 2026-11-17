@@ -151,7 +151,7 @@ await expect(todoMvcPage.todoLabels).toHaveText(["Walk the dog (30 min)"]);   //
 
 ## 6. Tại sao không cần xoá dữ liệu giữa các test?
 
-TodoMVC lưu todo trong `localStorage` của trình duyệt. Playwright tạo **browser context mới cho mỗi test**, nên `localStorage` luôn trống khi test bắt đầu. Mỗi test tự thêm todo nó cần, không phụ thuộc test khác. Đây gọi là **test độc lập (isolated)**, chạy song song hay đảo thứ tự đều không sao.
+Playwright tạo **browser context mới cho mỗi test**, tức là mỗi test mở một trình duyệt sạch, không còn dữ liệu của test trước. Bản TodoMVC React trên todomvc.com thậm chí **không lưu todo** (không ghi gì vào `localStorage`, reload là mất hết, đã kiểm tra ngày 2026-11-17), nên TC21 được đánh dấu `test.fail()` là lỗi đã biết của app. Mỗi test tự thêm todo nó cần, không phụ thuộc test khác. Đây gọi là **test độc lập (isolated)**, chạy song song hay đảo thứ tự đều không sao.
 
 ---
 

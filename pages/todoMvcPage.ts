@@ -11,6 +11,11 @@ export class TodoMvcPage {
   readonly todoToggle: (text: string) => Locator;
   readonly todoDeleteButton: (text: string) => Locator;
   readonly todoLabel: (text: string) => Locator;
+  readonly clearCompletedButton: Locator;
+  readonly allFilterButton: Locator;
+  readonly activeFilterButton: Locator;
+  readonly completedFilterButton: Locator;
+  readonly allToggle: Locator;
   readonly url = "https://todomvc.com/examples/react/dist/";
 
   constructor(page: Page) {
@@ -29,6 +34,17 @@ export class TodoMvcPage {
     this.todoToggle = (text) => this.todoItem(text).getByTestId("todo-item-toggle");
     this.todoDeleteButton = (text) => this.todoItem(text).getByRole("button", { name: "Delete todo" });
     this.todoLabel = (text) => this.todoItem(text).getByTestId("todo-item-label");
+
+    // Locators for clearCompleted button, which only shows up when there are completed todos
+    this.clearCompletedButton = page.getByRole("button", { name: "Clear completed" });
+
+    // Locators for the filter buttons, which are always visible
+    this.allFilterButton = page.getByRole("link", { name: "All" });
+    this.activeFilterButton = page.getByRole("link", { name: "Active" });
+    this.completedFilterButton = page.getByRole("link", { name: "Completed" });
+
+    // Locator for the toggle-all checkbox, which is always visible
+    this.allToggle = page.getByTestId("toggle-all");
   }
 
   async open() {
@@ -55,5 +71,33 @@ export class TodoMvcPage {
     // fill() clears the old text before typing the new one
     await this.editInput.fill(newText);
     await this.editInput.press("Enter");
+  }
+
+  // The clearCompleted button is only visible when there are completed todos
+  async clearCompleted() {
+    await this.clearCompletedButton.click();
+  } 
+
+  // The filter buttons are always visible, so no need to check for visibility
+  async filterAll() {
+    await this.allFilterButton.click();
+  }
+
+  async filterActive() {
+    await this.activeFilterButton.click();
+  }
+
+  async filterCompleted() {
+    await this.completedFilterButton.click();
+  }
+
+  // The page can be reloaded at any time, and the app should persist the todos
+  async loadingPage() {
+    await this.page.reload();
+  }
+
+  // The toggle-all checkbox is always visible, so no need to check for visibility
+  async toggleAll() {
+    await this.allToggle.click();
   }
 }
